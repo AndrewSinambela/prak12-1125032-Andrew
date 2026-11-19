@@ -1,7 +1,7 @@
 public class Main {
     public static void main(String[] args) {
         ChatRoom general = new ChatRoom("General");
-        ChatRoom sports = new ChatRoom("Sports");
+        general.addBadword("bodoh");
 
         User budi = new User("Budi");
         User andi = new User("Andi");
@@ -11,13 +11,15 @@ public class Main {
         general.registerUser(andi);
         general.registerUser(cici);
 
-        sports.registerUser(andi);
-        sports.registerUser(budi);
+        budi.sendToRoom("General", "Halo semuanya!");
+        andi.sendToRoom("General", "Jangan ngomong bodoh ya");
 
-        budi.sendToRoom("General", "Halo warga General!");
-        andi.sendToRoom("Sports", "Siapa yang main futsal nanti sore?");
+        general.muteUser(andi);
+        andi.sendToRoom("General", "Pesan ini tidak akan terkirim");
+        andi.receiveMessage(budi, "Andi tetap bisa baca pesan saat di-mute");
 
-        general.removeUser(cici);
-        budi.sendToRoom("General", "Cici sudah keluar ya.");
+        general.unmuteUser(andi);
+        andi.sendToRoom("General", "Sudah di-unmute nih");
+        general.showHistory();
     }
 }
