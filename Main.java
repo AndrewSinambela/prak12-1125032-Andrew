@@ -11,6 +11,6 @@ public class Main {
         general.registerUser(cici);
 
         budi.send("Halo semuanya!");
-        andi.send("Hai Budi, apa kabar?");
+        budi.sendPrivate("Cici", "Rahasia ya ini");
     }
 }

@@ -16,11 +16,23 @@ public class User {
 
     public void send(String message) {
         if (chatRoom != null) {
+            System.out.println("[" + this.name + "]: Memproses pengiriman pesan grup...");
             chatRoom.sendBroadcast(this, message);
+        }
+    }
+
+    public void sendPrivate(String recipientName, String message) {
+        if (chatRoom != null) {
+            System.out.println("[" + this.name + "]: Mengirim pesan privat ke " + recipientName + "...");
+            chatRoom.sendPrivateMessage(this, recipientName, message);
         }
     }
 
     public void receiveMessage(User sender, String message) {
         System.out.println("[" + this.name + "] Menerima pesan dari " + sender.getName() + ": " + message);
+    }
+
+    public void receivePrivateMessage(User sender, String message) {
+        System.out.println("[" + this.name + "] Menerima pesan privat dari " + sender.getName() + ": " + message);
     }
 }
