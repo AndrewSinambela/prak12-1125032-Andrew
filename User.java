@@ -1,9 +1,13 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
     private String name;
-    private ChatRoom chatRoom;
+    private List<ChatRoom> chatRooms;
 
     public User(String name) {
         this.name = name;
+        this.chatRooms = new ArrayList<>();
     }
 
     public String getName() {
@@ -11,20 +15,46 @@ public class User {
     }
 
     public void setChatRoom(ChatRoom chatRoom) {
-        this.chatRoom = chatRoom;
-    }
-
-    public void send(String message) {
-        if (chatRoom != null) {
-            System.out.println("[" + this.name + "]: Memproses pengiriman pesan grup...");
-            chatRoom.sendBroadcast(this, message);
+        if (chatRoom != null && !chatRooms.contains(chatRoom)) {
+            chatRooms.add(chatRoom);
         }
     }
 
+    public void leaveChatRoom(ChatRoom chatRoom) {
+        chatRooms.remove(chatRoom);
+    }
+
+    public void sendToRoom(String roomName, String message) {
+        for (ChatRoom room : chatRooms) {
+            if (room.getRoomName().equalsIgnoreCase(roomName)) {
+                System.out.println("[" + this.name + " @ " + room.getRoomName() + "]: Mengirim pesan grup...");
+                room.sendBroadcast(this, message);
+                return;
+            }
+        }
+        System.out.println("[" + this.name + "] Tidak terdaftar di room '" + roomName + "'.");
+    }
+
+    public void send(String message) {
+        if (!chatRooms.isEmpty()) {
+            sendToRoom(chatRooms.get(0).getRoomName(), message);
+        }
+    }
+
+    public void sendPrivateToRoom(String roomName, String recipientName, String message) {
+        for (ChatRoom room : chatRooms) {
+            if (room.getRoomName().equalsIgnoreCase(roomName)) {
+                System.out.println("[" + this.name + " @ " + room.getRoomName() + "]: Mengirim pesan privat ke " + recipientName + "...");
+                room.sendPrivateMessage(this, recipientName, message);
+                return;
+            }
+        }
+        System.out.println("[" + this.name + "] Tidak terdaftar di room '" + roomName + "'.");
+    }
+
     public void sendPrivate(String recipientName, String message) {
-        if (chatRoom != null) {
-            System.out.println("[" + this.name + "]: Mengirim pesan privat ke " + recipientName + "...");
-            chatRoom.sendPrivateMessage(this, recipientName, message);
+        if (!chatRooms.isEmpty()) {
+            sendPrivateToRoom(chatRooms.get(0).getRoomName(), recipientName, message);
         }
     }
 
