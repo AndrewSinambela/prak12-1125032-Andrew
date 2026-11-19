@@ -1,17 +1,34 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class ChatRoom {
     private String roomName;
     private List<User> members;
+    private List<String> badwords;
 
     public ChatRoom(String roomName) {
         this.roomName = roomName;
         this.members = new ArrayList<>();
+        this.badwords = new ArrayList<>();
     }
 
     public String getRoomName() {
         return roomName;
+    }
+
+    public void addBadword(String word) {
+        if (word != null && !word.isBlank()) {
+            badwords.add(word.toLowerCase());
+        }
+    }
+
+    public String filterMessage(String message) {
+        String filtered = message;
+        for (String badword : badwords) {
+            filtered = filtered.replaceAll("(?i)\\b" + Pattern.quote(badword) + "\\b", "***");
+        }
+        return filtered;
     }
 
     public void registerUser(User user) {
@@ -22,19 +39,21 @@ public class ChatRoom {
     }
 
     public void sendBroadcast(User sender, String message) {
-        System.out.println("[ChatRoom " + roomName + "] (Broadcast dari " + sender.getName() + "): " + message);
+        String cleanMessage = filterMessage(message);
+        System.out.println("[ChatRoom " + roomName + "] (Broadcast dari " + sender.getName() + "): " + cleanMessage);
         for (User member : members) {
             if (!member.equals(sender)) {
-                member.receiveMessage(sender, message);
+                member.receiveMessage(sender, cleanMessage);
             }
         }
     }
 
     public void sendPrivateMessage(User sender, String recipientName, String message) {
+        String cleanMessage = filterMessage(message);
         for (User member : members) {
             if (member.getName().equalsIgnoreCase(recipientName)) {
-                System.out.println("[ChatRoom " + roomName + "] (Private " + sender.getName() + " -> " + member.getName() + "): " + message);
-                member.receivePrivateMessage(sender, message);
+                System.out.println("[ChatRoom " + roomName + "] (Private " + sender.getName() + " -> " + member.getName() + "): " + cleanMessage);
+                member.receivePrivateMessage(sender, cleanMessage);
                 return;
             }
         }
