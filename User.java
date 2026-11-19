@@ -1,29 +1,22 @@
-import java.util.ArrayList;
-import java.util.List;
-
 public class User {
     private String name;
-    private List<User> contacts;
+    private ChatRoom chatRoom;
 
     public User(String name) {
         this.name = name;
-        this.contacts = new ArrayList<>();
     }
 
     public String getName() {
         return name;
     }
 
-    public void addContact(User user) {
-        if (!contacts.contains(user) && user != this) {
-            contacts.add(user);
-        }
+    public void setChatRoom(ChatRoom chatRoom) {
+        this.chatRoom = chatRoom;
     }
 
-    public void sendGroupMessage(String message) {
-        System.out.println("[" + this.name + " -> Group]: " + message);
-        for (User member : contacts) {
-            member.receiveMessage(this, message);
+    public void send(String message) {
+        if (chatRoom != null) {
+            chatRoom.sendBroadcast(this, message);
         }
     }
 
